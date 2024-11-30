@@ -18,10 +18,35 @@ contract Condominium {
             for (uint8 j = 1; j <= 5; j++) {
                 //os andares
                 for (uint8 k = 1; k <= 5; k++) {
-                    //as unidades
-                    residences[(i * 1000) + (j + 100) + k] = true;
+                    unchecked {
+                        //as unidades
+                        residences[(i * 1000) + (j + 100) + k] = true;
+                    }
                 }
             }
         }
+    }
+
+    modifier onlyManager() {
+        require(msg.sender == manager, "Only manager can do this");
+        _;
+    }
+
+    modifier onlyCouncil() {
+        require(msg.sender == manager || counselors[msg.sender], "Only manager or council can do this");
+        _;
+    }
+
+    modifier onlyResidents() {
+        require(msg.sender == manager || isResident(msg.sender), "Only manager or resident can do this");
+        _;
+    }
+
+    function residenceExists(uint16 residenceId) public view returns (bool) {
+        return residences[residenceId];
+    }
+
+    function isResident(address resident) public view returns (bool) {
+        return residents[resident] > 0;
     }
 }
