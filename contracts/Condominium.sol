@@ -58,5 +58,19 @@ contract Condominium {
     function removeResident(address resident) external onlyManager {
         require(!counselors[resident], "A counselor cannot be removed");
         delete residents[resident];
+
+        if (counselors[resident]) delete counselors[resident];
+    }
+
+    function setCounselor(address resident, bool isEntering) external onlyManager {
+        require(isResident(resident), "The counselor must be a resident");
+        if(isEntering) {
+            counselors[resident] = true;
+        } else delete counselors[resident];
+    }
+
+    function setManager(address newManager) external onlyManager {
+        require(newManager != address(0), "The address must be valid");
+        manager = newManager;
     }
 }
